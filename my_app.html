@@ -12,33 +12,43 @@
             height: 100%;
         }
         html, body {
-            height:100%;
+            height: 100%;
             margin: 0;
             padding: 0;
         }
+        #address_text {
+          position: relative;
+          width: 30%;
+        }
+        
+        
     </style>
 </head>
 <body>
     <header>
-            <div class="row">
-                <div class="col-xs-4 col-sm-4 col-md-6">
-                    <p> placeholder for logo and menu</p>
-                </div>
+            <div class="col-xs-4 col-sm-4 col-md-6">
+                <p> placeholder for logo and menu</p>
             </div>
-        </header>
-        <main>
-            <div class="col-md-3">
-                <p> Placeholder for menu and search stuff </p>
-            </div>
-            <div class="col-md-9" id="map">
-                <p> Placeholder for google maps </p>
-            </div>
-        </main>
-    </div>
+    </header>
+        <!-- <p> Placeholder for menu and search stuff </p>
+        <div id="temp_stuff">
+            <span data-bind="text: geoEnabled"></span><BR>
+            <span data-bind="foreach: markers">
+                <p data-bind="text: name"></p>
+                <p data-bind="text: category"></p>
+            </span>
+        </div> -->
+        <hr>
+        <div id="menu_bar">
+          <input id="address_text" type="text" placeholder="Address to go">
+          <input id="address_btn" type="button" value="Go!">
+        </div>
+        <hr>
+        <div id="map">
+        </div>
+    <script src="js/lib/knockout-3.4.2.js"></script>
+    <script src="js/my_app.js"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_hZGuoD8IFSdiS525BwWIT-SLVbG2FfQ&v=3&callback=loadCurrentLocation"></script>
 </body>
-<script src="js/lib/knockout-3.4.2.js"></script>
-<script src="js/my_app.js"></script>
-<script src="js/google_maps_API.js" </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_hZGuoD8IFSdiS525BwWIT-SLVbG2FfQ&v=3&callback=initMap" async defer></script>
 </html>
 
