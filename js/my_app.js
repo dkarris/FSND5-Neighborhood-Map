@@ -23,18 +23,27 @@ var ViewModel = function() {
     var self = this;
     this.zipCode = ko.observable();
     this.markers =  ko.observableArray([]);
+    this.showMarkers = ko.observable(true);
+    this.showMarkers.subscribe(function toggleMarkers() {
+        if (self.showMarkers() === true) {
+            /// set status to visible
+            console.log('true')
+        } else {
+            /// set status to hidden
+            console.log('false');
+        }   
+     });
 };
 
 // main script body
 
-
-ko.applyBindings(new ViewModel);
+vm = new ViewModel;
+ko.applyBindings(vm);
 
 document.getElementById('address_btn').
     addEventListener('click', function() {
     goToLocationGoogleMaps();
 });
-
 function goToLocationGoogleMaps() {
     // initialize the geocode
     var geocoder = new google.maps.Geocoder();
@@ -63,11 +72,10 @@ function loadFourSquareObjects(coordinates) {
                         fourSquare_CLIENT_SECRET + "&v=20170101&ll="+coordinates + "&limit=10";
     $.getJSON(fourSquare_urlAPI, function successGetFromFourSquare(response){
         $.each(response.response.venues, function loadMarkers(key,value){
-            console.log(value);
-            console.log(self);
-            ViewModel().markers.push(new marker(value));
+            //console.log(value);
+            vm.markers.push(new marker(value));
         });
-        drawGoogleMap(coordinates,ViewModel.markers);
+        drawGoogleMap(coordinates, vm.markers());
     });
 }
 function loadCurrentLocation() {
@@ -85,12 +93,19 @@ function loadCurrentLocation() {
 }
 function drawGoogleMap(coords,markers) {
     //Constructor creates a new map - only center and zoom are required.
-    // parse longiture /latititide from format "lat,long" - used for
+    // parse longitute /latititide from format "lat,long" - used for
     // FourSquare
     var coords = coords.split(',');
+    var googleMarkers = [];
     // Draw map with passed coordinates
     map.setCenter({lat: Number(coords[0]), lng: Number(coords[1])});
     map.setZoom(15);
-
-    // Place markers from markers collection
-}
+    // Create markers for the area
+    for (let marker of markers) {
+        var googleMarker = new google.maps.Marker({
+            position:   {lat:marker.latitude, lng:marker.longitude},
+            title:      marker.name 
+        });
+    }
+    console.log(vm);
+ }
