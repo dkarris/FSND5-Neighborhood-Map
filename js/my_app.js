@@ -1,7 +1,7 @@
 var fourSquare_CLIENT_ID = "E31EX22E0IKTMUUBARAYI51DAR3YSPQPBANLYH5SRCPHYUE1";
 var fourSquare_CLIENT_SECRET = "PWO4MWWSEP0CSCK250VWZFKKNTQIJHQEYTQH2KQ1GHCT2AOK";
 var map;
-
+var googleMarkers = [];
 //
 var marker = function(markerData) {
     this.id = markerData.id;
@@ -23,17 +23,23 @@ var ViewModel = function() {
     var self = this;
     this.zipCode = ko.observable();
     this.markers =  ko.observableArray([]);
-    this.showMarkers = ko.observable(true);
-    this.showMarkers.subscribe(function toggleMarkers() {
-        if (self.showMarkers() === true) {
+    this.showMarkers = ko.observable(false);
+    this.showMarkers.subscribe(toggleMarkers);
+};
+
+function toggleMarkers() {
+        if (vm.showMarkers() === true) {
             /// set status to visible
-            console.log('true')
+            for (var i=0; i<googleMarkers.length; i++) {
+                googleMarkers[i].setMap(map);
+            }
         } else {
             /// set status to hidden
-            console.log('false');
+            for (var i=0; i<googleMarkers.length; i++) {
+                googleMarkers[i].setMap(null);
+            }
         }   
-     });
-};
+     };
 
 // main script body
 
@@ -96,7 +102,6 @@ function drawGoogleMap(coords,markers) {
     // parse longitute /latititide from format "lat,long" - used for
     // FourSquare
     var coords = coords.split(',');
-    var googleMarkers = [];
     // Draw map with passed coordinates
     map.setCenter({lat: Number(coords[0]), lng: Number(coords[1])});
     map.setZoom(15);
@@ -106,6 +111,7 @@ function drawGoogleMap(coords,markers) {
             position:   {lat:marker.latitude, lng:marker.longitude},
             title:      marker.name 
         });
+        googleMarkers.push(googleMarker);
     }
-    console.log(vm);
+    toggleMarkers();
  }
