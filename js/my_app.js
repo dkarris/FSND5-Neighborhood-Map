@@ -23,16 +23,26 @@ var ViewModel = function() {
     var self = this;
     this.zipCode = ko.observable();
     this.markers =  ko.observableArray([]);
-    this.showMarkers = ko.observable(false);
+    this.showMarkers = ko.observable(true);
     this.showMarkers.subscribe(toggleMarkers);
 };
 
 function toggleMarkers() {
         if (vm.showMarkers() === true) {
-            /// set status to visible
+            // set status to visible - initiate info window and googleMarkers array
+            
+            var infoWindow = new google.maps.InfoWindow();
+            var bounds = new google.maps.LatLngBounds();
             for (var i=0; i<googleMarkers.length; i++) {
+                // add animation
+                googleMarkers[i].animation = google.maps.Animation.DROP;
                 googleMarkers[i].setMap(map);
+                bounds.extend(googleMarkers[i].position);
+                googleMarkers[i].addListener('click', function() {
+                    populateInfoWindow(this, infoWindow);
+                });
             }
+            map.fitBounds(bounds);
         } else {
             /// set status to hidden
             for (var i=0; i<googleMarkers.length; i++) {
@@ -41,9 +51,24 @@ function toggleMarkers() {
         }   
      };
 
+function populateInfoWindow(googleMarker, infowindow) {
+    // check if infoWindow is opened
+
+    if (infowindow.marker != googleMarker) {
+        infowindow.marker = googleMarker;
+        infowindow.setContent('<div>' + googleMarker.title + '</div>');
+        infowindow.open(map, googleMarker);
+
+        // if closed - clear the content
+        infowindow.addListener('closeclick', function() {
+            infowindow.marker = null;
+        });
+    }
+}
+
 // main script body
 
-vm = new ViewModel;
+vm = new ViewModel();
 ko.applyBindings(vm);
 
 document.getElementById('address_btn').
@@ -76,6 +101,8 @@ function loadFourSquareObjects(coordinates) {
     var fourSquare_urlAPI = "https://api.foursquare.com/v2/venues/search?" +
                         "client_id="+fourSquare_CLIENT_ID + "&client_secret=" +
                         fourSquare_CLIENT_SECRET + "&v=20170101&ll="+coordinates + "&limit=10";
+    // clear markers location array before reseting the map
+    vm.markers().length = 0;
     $.getJSON(fourSquare_urlAPI, function successGetFromFourSquare(response){
         $.each(response.response.venues, function loadMarkers(key,value){
             //console.log(value);
@@ -98,14 +125,8 @@ function loadCurrentLocation() {
     }
 }
 function drawGoogleMap(coords,markers) {
-    //Constructor creates a new map - only center and zoom are required.
-    // parse longitute /latititide from format "lat,long" - used for
-    // FourSquare
-    var coords = coords.split(',');
-    // Draw map with passed coordinates
-    map.setCenter({lat: Number(coords[0]), lng: Number(coords[1])});
-    map.setZoom(15);
-    // Create markers for the area
+    // Create markers for the area buf first clear any from the previos searches
+    googleMarkers.length = 0;    
     for (let marker of markers) {
         var googleMarker = new google.maps.Marker({
             position:   {lat:marker.latitude, lng:marker.longitude},
@@ -113,5 +134,13 @@ function drawGoogleMap(coords,markers) {
         });
         googleMarkers.push(googleMarker);
     }
+    //Constructor creates a new map - only center and zoom are required.
+    // parse longitute /latititide from format "lat,long" - used for
+    // FourSquare
+    var coords = coords.split(',');
+    // Draw map with passed coordinates
+    map.setCenter({lat: Number(coords[0]), lng: Number(coords[1])});
+    map.setZoom(15);
+    // draw markers based on checkbox selection
     toggleMarkers();
  }
