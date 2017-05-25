@@ -30,9 +30,8 @@
                 <p> placeholder for logo and menu</p>
             </div>
     </header>
-        <!-- <p> Placeholder for menu and search stuff </p>
+        <!-- p> Placeholder for menu and search stuff </p>
         <div id="temp_stuff">
-            <span data-bind="text: geoEnabled"></span><BR>
             <span data-bind="foreach: markers">
                 <p data-bind="text: name"></p>
                 <p data-bind="text: category"></p>
@@ -42,7 +41,9 @@
         <div id="menu_bar">
           <input id="address_text" type="text" placeholder="Address to go">
           <input id="address_btn" type="button" value="Go!">
-          <input id="marker_view" type="checkbox" data-bind="checked: showMarkers">Show FourSquares POI</input>
+          <input id="marker_view" type="checkbox" data-bind="checked: showMarkers">Show Markers</input>
+          <span>Number of markers</span>
+          <select data-bind="options: limitPOIoptions, value: limitPOI "></select>
         </div>
         <hr>
         <div id="map">
