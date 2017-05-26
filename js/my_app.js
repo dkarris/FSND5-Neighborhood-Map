@@ -1,18 +1,23 @@
 // to do::
 // filter
-// categories
-// choose categories
+// categories - done
+// choose categories - done
 // search
 // mobile - responsive stuff
 // weather
 // toggle bounce
+// handle google load error
 
-
+// FS API stuff
 var fourSquare_CLIENT_ID = "E31EX22E0IKTMUUBARAYI51DAR3YSPQPBANLYH5SRCPHYUE1";
 var fourSquare_CLIENT_SECRET = "PWO4MWWSEP0CSCK250VWZFKKNTQIJHQEYTQH2KQ1GHCT2AOK";
+
+// Google map and objects
 var map;
 var googleMarkers = [];
 
+// model object for coordinates
+var coords;
 
 // model object for POI
 var marker = function(markerData) {
@@ -32,9 +37,6 @@ var marker = function(markerData) {
     },this)
 };
 
-// model object for coordinates
-var coords;
-
 // View model definition
 var ViewModel = function() {
     var self = this;
@@ -47,6 +49,10 @@ var ViewModel = function() {
     this.limitPOI.subscribe(function(newLimitPOI){
         loadFourSquareObjects(coords,newLimitPOI);
     })
+    this.POIcategories = ko.observableArray([]); // will get populated with FourSquare POI categories
+    this.filterCategory = ko.observable();
+    //this.query: ko.observable(); // temp variable for search functionality
+
 };
 
 function toggleMarkers() {
@@ -55,7 +61,6 @@ function toggleMarkers() {
             var infoWindow = new google.maps.InfoWindow();
             var bounds = new google.maps.LatLngBounds();
             for (var i=0; i<googleMarkers.length; i++) {
-                // add animation
                 googleMarkers[i].setMap(map);
                 bounds.extend(googleMarkers[i].position);
                 googleMarkers[i].addListener('click', function() {
@@ -86,15 +91,6 @@ function populateInfoWindow(googleMarker, infowindow) {
     }
 }
 
-// main script body
-
-vm = new ViewModel();
-ko.applyBindings(vm);
-
-document.getElementById('address_btn').
-    addEventListener('click', function() {
-    goToLocationGoogleMaps();
-});
 function goToLocationGoogleMaps() {
     // initialize the geocode
     var geocoder = new google.maps.Geocoder();
@@ -110,7 +106,6 @@ function goToLocationGoogleMaps() {
             if (status == google.maps.GeocoderStatus.OK) {
                 // unpack coordinates to pass into fourSquares api
                 coords = results[0].geometry.location.lat() + "," + results[0].geometry.location.lng();
-                console.log(coords);
                 loadFourSquareObjects(coords, vm.limitPOI());
             } else {
                 window.alert ('Address is not found');
@@ -124,9 +119,7 @@ function loadFourSquareObjects(coordinates,records) {
                         fourSquare_CLIENT_SECRET + "&v=20170101&ll="+coordinates + "&limit="+records;
     // clear markers location array before reseting the map
     vm.markers().length = 0;
-    console.log(fourSquare_urlAPI);
     $.getJSON(fourSquare_urlAPI, function successGetFromFourSquare(response){
-        // console.log(response);
         $.each(response.response.venues, function loadMarkers(key,value){
             vm.markers.push(new marker(value));
         });
@@ -163,8 +156,13 @@ function drawGoogleMap(coords,markers) {
             animation:  google.maps.Animation.DROP
         });
         googleMarkers.push(googleMarker);
+        // if  marker.category does not exist in vm.POIcategories
+        // POIcategories is UX drop down list to filter
+        if (vm.POIcategories.indexOf(marker.category) == -1) {
+            vm.POIcategories.push(marker.category)
+        } 
     }
-    // console.log(googleMarkers);
+    
     //Constructor creates a new map - only center and zoom are required.
     // parse longitute /latititide from format "lat,long" - used for
     // FourSquare
@@ -180,3 +178,25 @@ function clearMarkers() {
         googleMarkers[i].setMap(null);
     }
 };
+function filterMarkers(category) {
+    var tempMarkers = googleMarkers;
+
+    googleMarkers = [];
+
+}
+
+
+// main script body
+
+vm = new ViewModel();
+ko.applyBindings(vm);
+
+
+// main script end
+
+// event handlers
+
+document.getElementById('address_btn').
+    addEventListener('click', function() {
+    goToLocationGoogleMaps();
+});

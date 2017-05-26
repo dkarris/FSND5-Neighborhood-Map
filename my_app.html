@@ -26,17 +26,15 @@
 </head>
 <body>
     <header>
-            <div class="col-xs-4 col-sm-4 col-md-6">
+            <!-- <div class="col-xs-4 col-sm-4 col-md-6">
                 <p> placeholder for logo and menu</p>
-            </div>
+            </div> -->
     </header>
-        <!-- p> Placeholder for menu and search stuff </p>
         <div id="temp_stuff">
-            <span data-bind="foreach: markers">
+            <span data-bind="foreach: googleMarkers">
                 <p data-bind="text: name"></p>
-                <p data-bind="text: category"></p>
             </span>
-        </div> -->
+        </div> 
         <hr>
         <div id="menu_bar">
           <input id="address_text" type="text" placeholder="Address to go">
@@ -44,6 +42,8 @@
           <input id="marker_view" type="checkbox" data-bind="checked: showMarkers">Show Markers</input>
           <span>Number of markers</span>
           <select data-bind="options: limitPOIoptions, value: limitPOI "></select>
+          <select data-bind="options: POIcategories, optionsCaption: 'Choose category', value: filterCategory"></select> 
+          <!-- <input type="search" placeholder = "Search POI" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off"> -->
         </div>
         <hr>
         <div id="map">
