@@ -47,6 +47,10 @@ html, body {
 #address_text {
        width: 60%;
     }
+.list_item:hover {
+    background-color: white;
+    color: black;
+}
 /* Extra Small Devices, Phones */ 
 @media screen and (min-width: 200px) {
 

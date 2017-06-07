@@ -71,10 +71,9 @@ var ViewModel = function() {
         }
         drawGoogleMap(coords,self.markersFiltered());
     })
-    this.dispay = function () {
-        console.log(object);
-        console.log('smth');
-        console.log(self);
+    this.display = function (data, event) {
+        var index = ko.contextFor(event.target).$index();
+        google.maps.event.trigger(googleMarkers[index],'click');
     }
 };
 
@@ -165,7 +164,6 @@ function applyCategoryFilter(filterValue) {
         // restore back from the original array
         vm.markersFiltered(vm.markers.slice());
     }
-    //map = new google.maps.Map(document.getElementById('map'), { });
     drawGoogleMap(coords,vm.markersFiltered());
 }
 function loadCurrentLocation() {
@@ -197,7 +195,7 @@ function drawGoogleMap(coords,markers) {
             category:   marker.category,
             phone:      marker.phone,
             address:    marker.address,
-            animation:  google.maps.Animation.DROPб
+            // animation:  google.maps.Animation.BOUNCE;
         });
         googleMarkers.push(googleMarker);
         // if  marker.category does not exist in vm.POIcategories

@@ -26,8 +26,7 @@
                 <select class="POI_element" data-bind="options: POIcategories, optionsCaption: 'Choose category/Show all', value: filterCategory"></select> 
                 <input class="POI_element" type="search" placeholder = "Search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
                 <span data-bind="foreach: markersFiltered">
-                    <p data-bind="text: name, click: $parent.display"></p>
-                    <!-- <p data-bind="text: $parent.dispay"></p> -->
+                         <p class="list_item" data-bind="text: name, click: $parent.display.bind($index())"></p>
                 </span>
                </div>
             </div> 
