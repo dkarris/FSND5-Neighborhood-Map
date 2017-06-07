@@ -4,25 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/main.css"
     <title>Neigbourghhood map project. Udacity FSND project 5</title>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
     crossorigin="anonymous"></script>
-    <style>
-        #map {
-            height: 100%;
-        }
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        #address_text {
-          position: relative;
-          width: 30%;
-        }
-        
-        
-    </style>
 </head>
 <body>
     <header>
@@ -30,23 +15,23 @@
                 <p> placeholder for logo and menu</p>
             </div> -->
     </header>
-        <div id="temp_stuff">
-            <span data-bind="foreach: googleMarkers">
-                <p data-bind="text: name"></p>
-            </span>
-        </div> 
-        <hr>
-        <div id="menu_bar">
-          <input id="address_text" type="text" placeholder="Address to go">
-          <input id="address_btn" type="button" value="Go!">
-          <input id="marker_view" type="checkbox" data-bind="checked: showMarkers">Show Markers</input>
-          <span>Number of markers</span>
-          <select data-bind="options: limitPOIoptions, value: limitPOI "></select>
-          <select data-bind="options: POIcategories, optionsCaption: 'Choose category', value: filterCategory"></select> 
-          <!-- <input type="search" placeholder = "Search POI" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off"> -->
-        </div>
-        <hr>
-        <div id="map">
+        <div class="container">
+            <div id="POI_list">
+               <div id="elements_wrapper">
+                <input id="address_text" type="text" placeholder="Address to go">
+                <input id="address_btn" type="button" value="Go!"><BR>
+                <input class="_POI_element" id="marker_view" type="checkbox" data-bind="checked: showMarkers">Show Markers</input><BR>
+                <span>Number of markers</span>
+                <select data-bind="options: limitPOIoptions, value: limitPOI "></select>
+                <select class="POI_element" data-bind="options: POIcategories, optionsCaption: 'Choose category/Show all', value: filterCategory"></select> 
+                <input class="POI_element" type="search" placeholder = "Search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
+                <span data-bind="foreach: markersFiltered">
+                    <p data-bind="text: name, click: $parent.display"></p>
+                    <!-- <p data-bind="text: $parent.dispay"></p> -->
+                </span>
+               </div>
+            </div> 
+            <div id="map"></div>
         </div>
     <script src="js/lib/knockout-3.4.2.js"></script>
     <script src="js/my_app.js"></script>

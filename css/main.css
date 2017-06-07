@@ -1,0 +1,65 @@
+html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+}
+#map, .container {
+        height: 100%;
+}
+.container {
+    display: -webkit-flex;
+    display: flex;
+    background-color: gray;
+}
+
+
+#POI_list {
+    background-color: black; 
+    opacity: 0.7;
+    width:30%;
+    min-height: 150px;
+    z-index: 25; position: absolute;top: 40px; right: 30px;
+}
+
+#map_container {
+    height: 100%;
+    max-width: 100%;
+}
+
+#map {
+    z-index: 1; position: relative;
+    width: 100%;
+} 
+
+.POI_element {
+    width: 70%;
+    margin:auto;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#elements_wrapper {
+    width: 80%
+    opacity: 0.9;
+    margin:10px;
+    color: white;
+}
+#address_text {
+       width: 60%;
+    }
+/* Extra Small Devices, Phones */ 
+@media screen and (min-width: 200px) {
+
+}
+/* Small Devices, Tablets */
+@media screen and (min-width : 700px) {
+        
+}
+/* Medium Devices, Desktops */
+@media screen and (min-width : 992px) {
+    
+}
+/* Large Devices, Wide Screens */
+    @media only screen and (min-width : 1200px) {
+      
+}

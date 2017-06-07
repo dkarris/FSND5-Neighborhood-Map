@@ -71,7 +71,7 @@ var ViewModel = function() {
         }
         drawGoogleMap(coords,self.markersFiltered());
     })
-    this.dispay = function () {
+    this.dispayPOI = function (object) {
         console.log(object);
         console.log('smth');
         console.log(self);
