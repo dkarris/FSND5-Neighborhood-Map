@@ -25,16 +25,18 @@
                 <select data-bind="options: limitPOIoptions, value: limitPOI "></select>
                 <select class="POI_element" data-bind="options: POIcategories, optionsCaption: 'Choose category/Show all', value: filterCategory"></select> 
                 <input class="POI_element" type="search" placeholder = "Search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
+                <div id="list_wrapper">
                 <span data-bind="foreach: markersFiltered">
-                         <p class="list_item" data-bind="text: name, click: $parent.display.bind($index())"></p>
+                         <p class="list_item" data-bind="text: name, click: $parent.display"></p>
                 </span>
+                </div>
                </div>
             </div> 
             <div id="map"></div>
         </div>
     <script src="js/lib/knockout-3.4.2.js"></script>
     <script src="js/my_app.js"></script>
-    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_hZGuoD8IFSdiS525BwWIT-SLVbG2FfQ&v=3&callback=loadCurrentLocation"></script>
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_hZGuoD8IFSdiS525BwWIT-SLVbG2FfQ&v=3&callback=loadCurrentLocation&libraries=places" onerror="googleLoadError()"></script>
 </body>
 </html>
 

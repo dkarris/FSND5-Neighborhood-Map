@@ -4,10 +4,9 @@
 // choose categories - done
 // search - done
 // mobile - responsive stuff
-// weather
-// toggle bounce
-// handle google load error
-// UX
+// toggle bounce - done
+// handle google load error - done
+// UX - done
 
 
 // FourSquare API stuff
@@ -86,6 +85,11 @@ function toggleMarkers() {
                 googleMarkers[i].setMap(map);
                 bounds.extend(googleMarkers[i].position);
                 googleMarkers[i].addListener('click', function() {
+                    if (this.getAnimation() !== null) {
+                        this.setAnimation(null);
+                    } else {
+                        this.setAnimation(google.maps.Animation.BOUNCE);
+                    }
                     populateInfoWindow(this, infoWindow);
                 });
             }
@@ -108,6 +112,7 @@ function populateInfoWindow(googleMarker, infowindow) {
         infowindow.open(map,googleMarker);
         // if closed - clear the content
         infowindow.addListener('closeclick', function() {
+            googleMarker.setAnimation(null);
             infowindow.marker = null;
         });
     }
@@ -180,6 +185,149 @@ function loadCurrentLocation() {
     }
 }
 function drawGoogleMap(coords,markers) {
+    // set markers style
+    var defaultIcon = makeMarkerIcon('0091ff');
+    var highlightedIcon = makeMarkerIcon('FFFF24');
+
+    // set style
+     var style = [
+    {
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "hue": "#ff4400"
+            },
+            {
+                "saturation": -68
+            },
+            {
+                "lightness": -4
+            },
+            {
+                "gamma": 0.72
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "labels.icon"
+    },
+    {
+        "featureType": "landscape.man_made",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "hue": "#0077ff"
+            },
+            {
+                "gamma": 3.1
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "stylers": [
+            {
+                "hue": "#00ccff"
+            },
+            {
+                "gamma": 0.44
+            },
+            {
+                "saturation": -33
+            }
+        ]
+    },
+    {
+        "featureType": "poi.park",
+        "stylers": [
+            {
+                "hue": "#44ff00"
+            },
+            {
+                "saturation": -23
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "labels.text.fill",
+        "stylers": [
+            {
+                "hue": "#007fff"
+            },
+            {
+                "gamma": 0.77
+            },
+            {
+                "saturation": 65
+            },
+            {
+                "lightness": 99
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "gamma": 0.11
+            },
+            {
+                "weight": 5.6
+            },
+            {
+                "saturation": 99
+            },
+            {
+                "hue": "#0091ff"
+            },
+            {
+                "lightness": -86
+            }
+        ]
+    },
+    {
+        "featureType": "transit.line",
+        "elementType": "geometry",
+        "stylers": [
+            {
+                "lightness": -48
+            },
+            {
+                "hue": "#ff5e00"
+            },
+            {
+                "gamma": 1.2
+            },
+            {
+                "saturation": -23
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "labels.text.stroke",
+        "stylers": [
+            {
+                "saturation": -64
+            },
+            {
+                "hue": "#ff9100"
+            },
+            {
+                "lightness": 16
+            },
+            {
+                "gamma": 0.47
+            },
+            {
+                "weight": 2.7
+            }
+        ]
+    }
+]
     // Create googleMarkers global array for the area buf first clear any residues from the previos searches in googleMarkers
     clearGoogleMarkers(); 
     googleMarkers.length = 0;
@@ -195,7 +343,8 @@ function drawGoogleMap(coords,markers) {
             category:   marker.category,
             phone:      marker.phone,
             address:    marker.address,
-            // animation:  google.maps.Animation.BOUNCE;
+            animation:  google.maps.Animation.DROP,
+            icon: defaultIcon
         });
         googleMarkers.push(googleMarker);
         // if  marker.category does not exist in vm.POIcategories
@@ -203,17 +352,29 @@ function drawGoogleMap(coords,markers) {
         if (vm.POIcategories.indexOf(marker.category) == -1) {
             vm.POIcategories.push(marker.category)
         } 
+        googleMarker.addListener('mouseover', function() {
+            this.setIcon(highlightedIcon);
+        });
+        googleMarker.addListener('mouseout', function() {
+            this.setIcon(defaultIcon);
+        })
     }
     
-    //Constructor creates a new map - only center and zoom are required.
+    // Constructor creates a new map - only center and zoom are required.
     // parse longitute /latititide from format "lat,long" - used for
     // FourSquare
     var coords = coords.split(',');
     // Draw map with passed coordinates
     map.setCenter({lat: Number(coords[0]), lng: Number(coords[1])});
     map.setZoom(5);
+    map.setOptions({styles : style});
     // draw markers based on checkbox selection
     toggleMarkers();
+
+    // assign auto-complete to button
+    var goToPlace = new google.maps.places.Autocomplete(
+        document.getElementById('address_text'));
+    goToPlace.bindTo('bounds', map)
  }
 function clearGoogleMarkers() {
  for (var i=0;i<googleMarkers.length;i++) {
@@ -221,15 +382,36 @@ function clearGoogleMarkers() {
     }
 };
 
+function googleLoadError() {
+    alert ('Google maps failed to load. Aborting. Please check your network connectivity')
+}
+
+// This function takes in a COLOR, and then creates a new marker
+      // icon of that color. The icon will be 21 px wide by 34 high, have an origin
+      // of 0, 0 and be anchored at 10, 34).
+function makeMarkerIcon(markerColor) {
+    var markerImage = new google.maps.MarkerImage(
+       'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+       '|40|_|%E2%80%A2',
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(10, 34),
+        new google.maps.Size(21,34));
+    return markerImage;
+}
+
+
+
 // main script body
 
-vm = new ViewModel();
-ko.applyBindings(vm);
+
+    vm = new ViewModel();
+    ko.applyBindings(vm);
 
 
 // main script end
 
-// event handlers
+// event handlers outside functions / MVC
 
 document.getElementById('address_btn').
     addEventListener('click', function() {

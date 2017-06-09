@@ -51,17 +51,24 @@ html, body {
     background-color: white;
     color: black;
 }
+#list_wrapper {
+    max-height: 60vh;
+    overflow-y: auto;
+}
 /* Extra Small Devices, Phones */ 
 @media screen and (min-width: 200px) {
 
 }
+
+
+
 /* Small Devices, Tablets */
 @media screen and (min-width : 700px) {
-        
+    /* works as intended on ipad        
 }
 /* Medium Devices, Desktops */
 @media screen and (min-width : 992px) {
-    
+    /* works as intender on desktops.
 }
 /* Large Devices, Wide Screens */
     @media only screen and (min-width : 1200px) {
