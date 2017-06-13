@@ -27,8 +27,8 @@ var marker = function(markerData) {
     this.longitude = markerData.location.lng;
     this.address = '';
     markerData.location.formattedAddress.forEach(function(element) {
-        this.address = this.address + '<BR>' + element
-    },this)
+        this.address = this.address + '<BR>' + element;
+    },this);
 };
 
 /** 
@@ -44,7 +44,7 @@ var ViewModel = function() {
     this.limitPOI = ko.observable(this.limitPOIoptions[2]);
     this.limitPOI.subscribe(function(newLimitPOI){
         loadFourSquareObjects(coords,newLimitPOI);
-    })
+    });
     this.POIcategories = ko.observableArray([]); // will get populated with FourSquare POI categories
     this.filterCategory = ko.observable();
     this.filterCategory.subscribe(applyCategoryFilter);
@@ -63,11 +63,11 @@ var ViewModel = function() {
             }
         }
         drawGoogleMap(coords,self.markersFiltered());
-    })
+    });
     this.display = function (data, event) {
         var index = ko.contextFor(event.target).$index();
         google.maps.event.trigger(googleMarkers[index],'click');
-    }
+    };
 };
 
 /**
@@ -95,7 +95,7 @@ function toggleMarkers() {
             /// set status to hidden => call clearMarkers
             clearGoogleMarkers();
         }   
-     };
+     }
 
 /**
 @description passes marker information to infowindow to open on the map
@@ -184,7 +184,7 @@ function applyCategoryFilter(filterValue) {
             if (marker.category == filterValue) {
                 vm.markersFiltered.push(marker);
             }
-        })
+        });
     } else {
         // restore back from the original array
         vm.markersFiltered(vm.markers.slice());
@@ -358,7 +358,7 @@ function drawGoogleMap(coords,markers) {
             }
         ]
     }
-]
+];
     // Create googleMarkers global array for the area buf first clear any residues from the previos searches in googleMarkers
     clearGoogleMarkers(); 
     googleMarkers.length = 0;
@@ -381,14 +381,14 @@ function drawGoogleMap(coords,markers) {
         // if  marker.category does not exist in vm.POIcategories
         // POIcategories is UX drop down list to filter
         if (vm.POIcategories.indexOf(marker.category) == -1) {
-            vm.POIcategories.push(marker.category)
+            vm.POIcategories.push(marker.category);
         } 
         googleMarker.addListener('mouseover', function() {
             this.setIcon(highlightedIcon);
         });
         googleMarker.addListener('mouseout', function() {
             this.setIcon(defaultIcon);
-        })
+        });
     }
     
     // Constructor creates a new map - only center and zoom are required.
@@ -405,7 +405,7 @@ function drawGoogleMap(coords,markers) {
     // assign auto-complete to button
     var goToPlace = new google.maps.places.Autocomplete(
         document.getElementById('address_text'));
-    goToPlace.bindTo('bounds', map)
+    goToPlace.bindTo('bounds', map);
  }
 
 /**
@@ -415,13 +415,13 @@ function clearGoogleMarkers() {
  for (var i=0;i<googleMarkers.length;i++) {
         googleMarkers[i].setMap(null);
     }
-};
+}
 
 /**
 @description handles google load error 
 */
 function googleLoadError() {
-    alert ('Google maps failed to load. Aborting. Please check your network connectivity')
+    alert ('Google maps failed to load. Aborting. Please check your network connectivity');
 }
 
 
