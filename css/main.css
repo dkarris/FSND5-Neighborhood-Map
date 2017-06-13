@@ -17,7 +17,7 @@ html, body {
     background-color: black; 
     opacity: 0.7;
     width:30%;
-    min-height: 150px;
+    /*min-height: 150px;*/
     z-index: 25; position: absolute;top: 40px; right: 30px;
 }
 
@@ -55,22 +55,33 @@ html, body {
     max-height: 60vh;
     overflow-y: auto;
 }
+#display_offCanvas, #close_POI_list {
+    display: none;
+    margin:5px;
+}
 /* Extra Small Devices, Phones */ 
-@media screen and (min-width: 200px) {
-
+@media only screen and (max-width: 450px) {
+#display_offCanvas, #close_POI_list {
+    display: block;
 }
 
+#elements_wrapper {
+    display: none;
+}
 
+#POI_list {
+    left:10px;top: 50px;
+}
 
 /* Small Devices, Tablets */
-@media screen and (min-width : 700px) {
+@media only screen and (min-width : 451px) {
     /* works as intended on ipad        
 }
 /* Medium Devices, Desktops */
-@media screen and (min-width : 992px) {
+@media only screen and (min-width : 992px) {
     /* works as intender on desktops.
 }
 /* Large Devices, Wide Screens */
-    @media only screen and (min-width : 1200px) {
+@media only screen and (min-width : 1200px) {
       
 }

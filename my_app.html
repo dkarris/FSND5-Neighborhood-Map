@@ -4,22 +4,22 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="css/main.css"
-    <title>Neigbourghhood map project. Udacity FSND project 5</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <title> Neigbourghhood map project. Udacity FSND project 5</title>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
     crossorigin="anonymous"></script>
 </head>
 <body>
-    <header>
-            <!-- <div class="col-xs-4 col-sm-4 col-md-6">
-                <p> placeholder for logo and menu</p>
-            </div> -->
-    </header>
-        <div class="container">
-            <div id="POI_list">
-               <div id="elements_wrapper">
+    <div class="container">
+        <div id="POI_list">
+            <div id = "display_offCanvas">
+                 <button onclick="openMenu()"" id="btn_menu">Display menu</button>
+            </div>
+            <div id="elements_wrapper">
+                <a href="javascript: void(0)" id="close_POI_list" onclick="closeMenu()">&times</a> <BR>
                 <input id="address_text" type="text" placeholder="Address to go">
-                <input id="address_btn" type="button" value="Go!"><BR>
+                <input id="address_btn" type="button" value="Go!">
+                <BR>
                 <input class="_POI_element" id="marker_view" type="checkbox" data-bind="checked: showMarkers">Show Markers</input><BR>
                 <span>Number of markers</span>
                 <select data-bind="options: limitPOIoptions, value: limitPOI "></select>

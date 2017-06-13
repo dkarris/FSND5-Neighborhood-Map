@@ -1,26 +1,19 @@
-// to do::
-// filter - done
-// categories - done
-// choose categories - done
-// search - done
-// mobile - responsive stuff
-// toggle bounce - done
-// handle google load error - done
-// UX - done
+/** Udacity FSND Project 5 Neighborhood map */
 
-
-// FourSquare API stuff
+/** defining FourSquare API variables */
 var fourSquare_CLIENT_ID = "E31EX22E0IKTMUUBARAYI51DAR3YSPQPBANLYH5SRCPHYUE1";
 var fourSquare_CLIENT_SECRET = "PWO4MWWSEP0CSCK250VWZFKKNTQIJHQEYTQH2KQ1GHCT2AOK";
 
-// Google map and objects
+/** defining Google Maps API variables */
 var map;
 var googleMarkers=[];
-
 // model object for coordinates
 var coords;
 
-// model object for POI
+/**  marker class 
+@constructs marker object
+@param markerData - data from FourSquare API 
+*/
 var marker = function(markerData) {
     this.id = markerData.id;
     this.name = markerData.name;
@@ -38,10 +31,12 @@ var marker = function(markerData) {
     },this)
 };
 
-// View model definition
+/** 
+@constructs ViewModel for the app
+*/
 var ViewModel = function() {
     var self = this;
-    this.markers =  ko.observableArray([]); // actually not required to be in vm
+    this.markers =  ko.observableArray([]); 
     this.markersFiltered = ko.observableArray([]);
     this.showMarkers = ko.observable(true);
     this.showMarkers.subscribe(toggleMarkers);
@@ -65,7 +60,6 @@ var ViewModel = function() {
                 if (marker.name.toLowerCase().indexOf(searchValue.toLowerCase()) >=0) {
                     self.markersFiltered.push(marker);
                 }
-        
             }
         }
         drawGoogleMap(coords,self.markersFiltered());
@@ -76,6 +70,9 @@ var ViewModel = function() {
     }
 };
 
+/**
+@description toggles markes on/off depending on previous state
+*/
 function toggleMarkers() {
         if (vm.showMarkers() === true) {
             // set status to visible - initiate info window and googleMarkers array
@@ -100,6 +97,12 @@ function toggleMarkers() {
         }   
      };
 
+/**
+@description passes marker information to infowindow to open on the map
+@param {marker} googleMarker
+@param {infowindow} infowindow
+@returns {nothing} draws data from marker object into infowindow associated with that marker
+*/
 function populateInfoWindow(googleMarker, infowindow) {
     // check if infoWindow is opened
     if (infowindow.marker != googleMarker) {
@@ -118,6 +121,10 @@ function populateInfoWindow(googleMarker, infowindow) {
     }
 }
 
+/**
+@description display map centered on the location passed from address_text
+then calls FourSquare API to retrieve data about the local POI's
+*/
 function goToLocationGoogleMaps() {
     // initialize the geocode
     var geocoder = new google.maps.Geocoder();
@@ -140,6 +147,14 @@ function goToLocationGoogleMaps() {
         });
     }
 }
+
+
+/**
+@description triggers ajax to FourSquare API 
+@param {coordinates} passed from google maps 
+@param {number} maximum amount of POI's to retrieve
+@returns populates filtered markers array and calls drawGoogleMap to actually display map and markers
+*/
 function loadFourSquareObjects(coordinates,records) {
     var fourSquare_urlAPI = "https://api.foursquare.com/v2/venues/search?" +
                         "client_id="+fourSquare_CLIENT_ID + "&client_secret=" +
@@ -151,11 +166,16 @@ function loadFourSquareObjects(coordinates,records) {
             vm.markers.push(new marker(value));
         });
         // save vm.markers array to filteredMarkers array so that we work with filteredMarkers
-        // and vm/markers is used to restore it back
+        // and vm.markers is used to restore it back
         vm.markersFiltered(vm.markers.slice()); 
         drawGoogleMap(coordinates, vm.markers());
     });
 }
+
+/** 
+@description filters markers area bases on user selection
+@param {text} category name
+*/
 function applyCategoryFilter(filterValue) {
 // clear filtered array and loop through main markers filtering criteria
     if (filterValue) {
@@ -171,6 +191,10 @@ function applyCategoryFilter(filterValue) {
     }
     drawGoogleMap(coords,vm.markersFiltered());
 }
+
+/**
+@description tries to get current user location if unsuccesfull fallsback to user manual location input
+*/
 function loadCurrentLocation() {
     map = new google.maps.Map(document.getElementById('map'), { });
     if ("geolocation" in navigator) {
@@ -184,11 +208,18 @@ function loadCurrentLocation() {
           alert('GPS functionality is not working. Please use address search bar to center Google Maps on your location');
     }
 }
+
+
+/**
+@description google initialize function.
+@param {coords} coordinate to draw the map
+@param {marker array} is used to populate googleMarkers and POI UX filter
+@returns sets google maps, markers , listeners, etc.
+*/
 function drawGoogleMap(coords,markers) {
     // set markers style
     var defaultIcon = makeMarkerIcon('0091ff');
     var highlightedIcon = makeMarkerIcon('FFFF24');
-
     // set style
      var style = [
     {
@@ -376,20 +407,31 @@ function drawGoogleMap(coords,markers) {
         document.getElementById('address_text'));
     goToPlace.bindTo('bounds', map)
  }
+
+/**
+@description clears googleMarkers array when applying new filters or redrawing map at new location
+*/
 function clearGoogleMarkers() {
  for (var i=0;i<googleMarkers.length;i++) {
         googleMarkers[i].setMap(null);
     }
 };
 
+/**
+@description handles google load error 
+*/
 function googleLoadError() {
     alert ('Google maps failed to load. Aborting. Please check your network connectivity')
 }
 
-// This function takes in a COLOR, and then creates a new marker
-      // icon of that color. The icon will be 21 px wide by 34 high, have an origin
-      // of 0, 0 and be anchored at 10, 34).
+
+/**
+@description simple setup for markers appearance. Borrowed from google api docs
+*/
 function makeMarkerIcon(markerColor) {
+    // This function takes in a COLOR, and then creates a new marker
+    // icon of that color. The icon will be 21 px wide by 34 high, have an origin
+    // of 0, 0 and be anchored at 10, 34).
     var markerImage = new google.maps.MarkerImage(
        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
        '|40|_|%E2%80%A2',
@@ -400,20 +442,26 @@ function makeMarkerIcon(markerColor) {
     return markerImage;
 }
 
-
-
-// main script body
-
-
+/** main script body */
     vm = new ViewModel();
     ko.applyBindings(vm);
-
-
-// main script end
-
-// event handlers outside functions / MVC
-
+/** main script end
+  event handlers outside functions / MVC */
 document.getElementById('address_btn').
     addEventListener('click', function() {
     goToLocationGoogleMaps();
 });
+
+/** event handlers to implement DOM manipulation for responsive design layout */
+function openMenu() {
+    document.getElementById("POI_list").style.width = "90%";
+    document.getElementById("elements_wrapper").style.display = "block";
+    document.getElementById("btn_menu").style.display = "none";
+}
+function closeMenu() {
+    document.getElementById("POI_list").style.width = "30%";
+    document.getElementById("elements_wrapper").style.display = "none";
+    document.getElementById("btn_menu").style.display = "block";
+}
+
+/* Script end */
