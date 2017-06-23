@@ -10,9 +10,9 @@ var googleMarkers=[];
 // model object for coordinates
 var coords;
 
-/**  marker class 
+/**  marker class
 @constructs marker object
-@param markerData - data from FourSquare API 
+@param markerData - data from FourSquare API
 */
 var marker = function(markerData) {
     this.id = markerData.id;
@@ -31,12 +31,12 @@ var marker = function(markerData) {
     },this);
 };
 
-/** 
+/**
 @constructs ViewModel for the app
 */
 var ViewModel = function() {
     var self = this;
-    this.markers =  ko.observableArray([]); 
+    this.markers =  ko.observableArray([]);
     this.markersFiltered = ko.observableArray([]);
     this.showMarkers = ko.observable(true);
     this.showMarkers.subscribe(toggleMarkers);
@@ -50,7 +50,7 @@ var ViewModel = function() {
     this.filterCategory.subscribe(applyCategoryFilter);
     this.query = ko.observable('');
     this.query.subscribe(function (searchValue){
-        // if searchValue is empty restore the original list else 
+        // if searchValue is empty restore the original list else
         // apply filter to markersFilter
         if (!searchValue) {
             self.markersFiltered(self.markers.slice());
@@ -70,31 +70,42 @@ var ViewModel = function() {
     };
 };
 
+
+/**
+description aux function to avoid JSlinter error W083 Don't make functions within a loop
+**/
+function auxClickMarkerFunction(googleMarker) {
+  var infoWindow = new google.maps.InfoWindow();
+  if (this.getAnimation() !== null) {
+        this.setAnimation(null);
+        }
+    else {
+      this.setAnimation(google.maps.Animation.BOUNCE);
+    }
+    populateInfoWindow(this, infoWindow);
+}
+
 /**
 @description toggles markes on/off depending on previous state
 */
 function toggleMarkers() {
         if (vm.showMarkers() === true) {
             // set status to visible - initiate info window and googleMarkers array
-            var infoWindow = new google.maps.InfoWindow();
             var bounds = new google.maps.LatLngBounds();
             for (var i=0; i<googleMarkers.length; i++) {
                 googleMarkers[i].setMap(map);
                 bounds.extend(googleMarkers[i].position);
-                googleMarkers[i].addListener('click', function() {
-                    if (this.getAnimation() !== null) {
-                        this.setAnimation(null);
-                    } else {
-                        this.setAnimation(google.maps.Animation.BOUNCE);
-                    }
-                    populateInfoWindow(this, infoWindow);
-                });
+                // googleMarker = googleMarkers[i];
+                googleMarkers[i].addListener('click', auxClickMarkerFunction);
+                
+                // console.log(auxClickMarkerFunction);
+              
             }
             map.fitBounds(bounds);
         } else {
             /// set status to hidden => call clearMarkers
             clearGoogleMarkers();
-        }   
+        }
      }
 
 /**
@@ -108,8 +119,8 @@ function populateInfoWindow(googleMarker, infowindow) {
     if (infowindow.marker != googleMarker) {
         infowindow.marker = googleMarker;
         var windowContent = '<div id="windowContent_category"> Category: ' + googleMarker.category + '</div>' +
-                            '<BR><div id="windowContent_name"> Name: ' + googleMarker.title + '</div>' + 
-                            '<BR><div id="windowContent_phone">Phone: ' + googleMarker.phone + '</div>' + 
+                            '<BR><div id="windowContent_name"> Name: ' + googleMarker.title + '</div>' +
+                            '<BR><div id="windowContent_phone">Phone: ' + googleMarker.phone + '</div>' +
                             '<BR><div id="windowContent_address">Address: '+ googleMarker.address + '</div>';
         infowindow.setContent(windowContent);
         infowindow.open(map,googleMarker);
@@ -150,8 +161,8 @@ function goToLocationGoogleMaps() {
 
 
 /**
-@description triggers ajax to FourSquare API 
-@param {coordinates} passed from google maps 
+@description triggers ajax to FourSquare API
+@param {coordinates} passed from google maps
 @param {number} maximum amount of POI's to retrieve
 @returns populates filtered markers array and calls drawGoogleMap to actually display map and markers
 */
@@ -167,19 +178,19 @@ function loadFourSquareObjects(coordinates,records) {
         });
         // save vm.markers array to filteredMarkers array so that we work with filteredMarkers
         // and vm.markers is used to restore it back
-        vm.markersFiltered(vm.markers.slice()); 
+        vm.markersFiltered(vm.markers.slice());
         drawGoogleMap(coordinates, vm.markers());
     });
 }
 
-/** 
+/**
 @description filters markers area bases on user selection
 @param {text} category name
 */
 function applyCategoryFilter(filterValue) {
 // clear filtered array and loop through main markers filtering criteria
     if (filterValue) {
-        vm.markersFiltered.removeAll(); 
+        vm.markersFiltered.removeAll();
         vm.markers().forEach(function (marker){
             if (marker.category == filterValue) {
                 vm.markersFiltered.push(marker);
@@ -209,6 +220,22 @@ function loadCurrentLocation() {
     }
 }
 
+/**
+description aux function to avoid JSlinter error W083 Don't make functions within a loop
+*/
+function auxMouseOver() {
+  var highlightedIcon = makeMarkerIcon('FFFF24');
+  this.setIcon(highlightedIcon);
+}
+
+/**
+description aux function to avoid JSlinter error W083 Don't make functions within a loop
+*/
+function auxMouseOut() {
+  var defaultIcon_for_aux = makeMarkerIcon('0091ff');
+  this.setIcon(defaultIcon_for_aux);
+}
+
 
 /**
 @description google initialize function.
@@ -217,11 +244,9 @@ function loadCurrentLocation() {
 @returns sets google maps, markers , listeners, etc.
 */
 function drawGoogleMap(coords,markers) {
-    // set markers style
+  // set style
     var defaultIcon = makeMarkerIcon('0091ff');
-    var highlightedIcon = makeMarkerIcon('FFFF24');
-    // set style
-     var style = [
+    var style = [
     {
         "elementType": "geometry",
         "stylers": [
@@ -360,7 +385,7 @@ function drawGoogleMap(coords,markers) {
     }
 ];
     // Create googleMarkers global array for the area buf first clear any residues from the previos searches in googleMarkers
-    clearGoogleMarkers(); 
+    clearGoogleMarkers();
     googleMarkers.length = 0;
     // clear POICategories if exist from the previous searches
     vm.POIcategories().length = 0;
@@ -382,21 +407,19 @@ function drawGoogleMap(coords,markers) {
         // POIcategories is UX drop down list to filter
         if (vm.POIcategories.indexOf(marker.category) == -1) {
             vm.POIcategories.push(marker.category);
-        } 
-        googleMarker.addListener('mouseover', function() {
-            this.setIcon(highlightedIcon);
-        });
-        googleMarker.addListener('mouseout', function() {
-            this.setIcon(defaultIcon);
-        });
+        }
+        
+        // googleMarker.addListener = auxHighlightIcon
+        googleMarker.addListener('mouseover', auxMouseOver);
+        googleMarker.addListener('mouseout', auxMouseOut);
     }
     
     // Constructor creates a new map - only center and zoom are required.
     // parse longitute /latititide from format "lat,long" - used for
     // FourSquare
-    var coords = coords.split(',');
+    var coords_local = coords.split(',');
     // Draw map with passed coordinates
-    map.setCenter({lat: Number(coords[0]), lng: Number(coords[1])});
+    map.setCenter({lat: Number(coords_local[0]), lng: Number(coords_local[1])});
     map.setZoom(5);
     map.setOptions({styles : style});
     // draw markers based on checkbox selection
@@ -418,7 +441,7 @@ function clearGoogleMarkers() {
 }
 
 /**
-@description handles google load error 
+@description handles google load error
 */
 function googleLoadError() {
     alert ('Google maps failed to load. Aborting. Please check your network connectivity');
@@ -441,6 +464,7 @@ function makeMarkerIcon(markerColor) {
         new google.maps.Size(21,34));
     return markerImage;
 }
+
 
 /** main script body */
     vm = new ViewModel();
