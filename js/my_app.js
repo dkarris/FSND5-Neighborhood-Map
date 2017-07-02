@@ -14,7 +14,7 @@ var coords;
 @constructs marker object
 @param markerData - data from FourSquare API
 */
-var marker = function(markerData) {
+var Marker = function(markerData) {
     this.id = markerData.id;
     this.name = markerData.name;
     if (markerData.categories.length !== 0) {
@@ -22,7 +22,7 @@ var marker = function(markerData) {
     }  else {
       this.category = "Not present in FourSquare db";
     }
-    this.phone = markerData.contact.formattedPhone;
+    (markerData.contact.formattedPhone) ? this.phone = markerData.contact.formattedPhone : this.phone = 'No info in FourSquare';
     this.latitude = markerData.location.lat;
     this.longitude = markerData.location.lng;
     this.address = '';
@@ -174,7 +174,7 @@ function loadFourSquareObjects(coordinates,records) {
     vm.markers().length = 0;
     $.getJSON(fourSquare_urlAPI, function successGetFromFourSquare(response){
         $.each(response.response.venues, function loadMarkers(key,value){
-            vm.markers.push(new marker(value));
+            vm.markers.push(new Marker(value));
         });
         // save vm.markers array to filteredMarkers array so that we work with filteredMarkers
         // and vm.markers is used to restore it back
@@ -244,154 +244,20 @@ function auxMouseOut() {
 @returns sets google maps, markers , listeners, etc.
 */
 function drawGoogleMap(coords,markers) {
-  // set style
+  // set Iconstyle
     var defaultIcon = makeMarkerIcon('0091ff');
-    var style = [
-    {
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "hue": "#ff4400"
-            },
-            {
-                "saturation": -68
-            },
-            {
-                "lightness": -4
-            },
-            {
-                "gamma": 0.72
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "labels.icon"
-    },
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "hue": "#0077ff"
-            },
-            {
-                "gamma": 3.1
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "stylers": [
-            {
-                "hue": "#00ccff"
-            },
-            {
-                "gamma": 0.44
-            },
-            {
-                "saturation": -33
-            }
-        ]
-    },
-    {
-        "featureType": "poi.park",
-        "stylers": [
-            {
-                "hue": "#44ff00"
-            },
-            {
-                "saturation": -23
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "labels.text.fill",
-        "stylers": [
-            {
-                "hue": "#007fff"
-            },
-            {
-                "gamma": 0.77
-            },
-            {
-                "saturation": 65
-            },
-            {
-                "lightness": 99
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "labels.text.stroke",
-        "stylers": [
-            {
-                "gamma": 0.11
-            },
-            {
-                "weight": 5.6
-            },
-            {
-                "saturation": 99
-            },
-            {
-                "hue": "#0091ff"
-            },
-            {
-                "lightness": -86
-            }
-        ]
-    },
-    {
-        "featureType": "transit.line",
-        "elementType": "geometry",
-        "stylers": [
-            {
-                "lightness": -48
-            },
-            {
-                "hue": "#ff5e00"
-            },
-            {
-                "gamma": 1.2
-            },
-            {
-                "saturation": -23
-            }
-        ]
-    },
-    {
-        "featureType": "transit",
-        "elementType": "labels.text.stroke",
-        "stylers": [
-            {
-                "saturation": -64
-            },
-            {
-                "hue": "#ff9100"
-            },
-            {
-                "lightness": 16
-            },
-            {
-                "gamma": 0.47
-            },
-            {
-                "weight": 2.7
-            }
-        ]
-    }
-];
+    //used to store map style JSON
+    var mapStyle; 
+    $.get("js/mapStyle.json")
+        .done(function(data) {
+            mapStyle = JSON.stringify(data);
+        });
     // Create googleMarkers global array for the area buf first clear any residues from the previos searches in googleMarkers
     clearGoogleMarkers();
     googleMarkers.length = 0;
     // clear POICategories if exist from the previous searches
     vm.POIcategories().length = 0;
     // now loop through new set and create data
-    // console.log('google got the following set');
-    // console.log(markers);
     for (let marker of markers) {
         var googleMarker = new google.maps.Marker({
             position:   {lat:marker.latitude, lng:marker.longitude},
@@ -421,7 +287,8 @@ function drawGoogleMap(coords,markers) {
     // Draw map with passed coordinates
     map.setCenter({lat: Number(coords_local[0]), lng: Number(coords_local[1])});
     map.setZoom(5);
-    map.setOptions({styles : style});
+    console.log(mapStyle);
+    map.setOptions({styles : mapStyle});
     // draw markers based on checkbox selection
     toggleMarkers();
 
