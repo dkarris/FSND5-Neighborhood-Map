@@ -20,8 +20,9 @@ Though for phones additional responsive layout is implemented improving user exp
 
 ## Installation
 
-Simply install the folder and open my_app.html file in your browser or setup a local webserver
+Run the app from any local server, Ex: python -m SimpleHTTPServer
 
 ## Programming patterns
 
 Knockout.js was used to build UX. Direct DOM manipulation is implemented for responsive design features only.
+
