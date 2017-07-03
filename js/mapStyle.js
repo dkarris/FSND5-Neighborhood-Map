@@ -1,4 +1,4 @@
-[
+var mapStyle = [
     {
         "elementType": "geometry",
         "stylers": [
@@ -135,4 +135,4 @@
             }
         ]
     }
-]
+];

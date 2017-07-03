@@ -68,8 +68,8 @@ var ViewModel = function() {
         var index = ko.contextFor(event.target).$index();
         google.maps.event.trigger(googleMarkers[index],'click');
     };
+    this.address = ko.observable();
 };
-
 
 /**
 description aux function to avoid JSlinter error W083 Don't make functions within a loop
@@ -90,21 +90,18 @@ function auxClickMarkerFunction(googleMarker) {
 */
 function toggleMarkers() {
         if (vm.showMarkers() === true) {
-            // set status to visible - initiate info window and googleMarkers array
             var bounds = new google.maps.LatLngBounds();
             for (var i=0; i<googleMarkers.length; i++) {
                 googleMarkers[i].setMap(map);
+                googleMarkers[i].setVisible(true);
                 bounds.extend(googleMarkers[i].position);
-                // googleMarker = googleMarkers[i];
                 googleMarkers[i].addListener('click', auxClickMarkerFunction);
-                
-                // console.log(auxClickMarkerFunction);
-              
             }
             map.fitBounds(bounds);
-        } else {
-            /// set status to hidden => call clearMarkers
-            clearGoogleMarkers();
+        }   else {
+            for (var i=0; i<googleMarkers.length; i++) {
+                googleMarkers[i].setVisible(false);
+            }
         }
      }
 
@@ -140,13 +137,12 @@ function goToLocationGoogleMaps() {
     // initialize the geocode
     var geocoder = new google.maps.Geocoder();
     // get the address
-    var address = document.getElementById('address_text').value;
     // if blank dispay error message and do nothing
-    if (address === '') {
+    if (vm.address() === '') {
         window.alert('Address line is blank. Please enter something to search');
     } else {
         // geocode the address
-        geocoder.geocode({'address':address},
+        geocoder.geocode({'address':vm.address()},
                 function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 // unpack coordinates to pass into fourSquares api
@@ -244,20 +240,23 @@ function auxMouseOut() {
 @returns sets google maps, markers , listeners, etc.
 */
 function drawGoogleMap(coords,markers) {
-  // set Iconstyle
+    // set Iconstyle
     var defaultIcon = makeMarkerIcon('0091ff');
-    //used to store map style JSON
-    var mapStyle; 
-    $.get("js/mapStyle.json")
-        .done(function(data) {
-            mapStyle = JSON.stringify(data);
-        });
     // Create googleMarkers global array for the area buf first clear any residues from the previos searches in googleMarkers
     clearGoogleMarkers();
     googleMarkers.length = 0;
     // clear POICategories if exist from the previous searches
     vm.POIcategories().length = 0;
     // now loop through new set and create data
+    // Constructor creates a new map - only center and zoom are required.
+    // parse longitute /latititide from format "lat,long" - used for
+    // FourSquare
+    var coords_local = coords.split(',');
+    // Draw map with passed coordinates
+    map.setCenter({lat: Number(coords_local[0]), lng: Number(coords_local[1])});
+    map.setZoom(5);
+    map.setOptions({styles : mapStyle});
+    // Load and draw markers based on checkbox selection
     for (let marker of markers) {
         var googleMarker = new google.maps.Marker({
             position:   {lat:marker.latitude, lng:marker.longitude},
@@ -279,19 +278,7 @@ function drawGoogleMap(coords,markers) {
         googleMarker.addListener('mouseover', auxMouseOver);
         googleMarker.addListener('mouseout', auxMouseOut);
     }
-    
-    // Constructor creates a new map - only center and zoom are required.
-    // parse longitute /latititide from format "lat,long" - used for
-    // FourSquare
-    var coords_local = coords.split(',');
-    // Draw map with passed coordinates
-    map.setCenter({lat: Number(coords_local[0]), lng: Number(coords_local[1])});
-    map.setZoom(5);
-    console.log(mapStyle);
-    map.setOptions({styles : mapStyle});
-    // draw markers based on checkbox selection
     toggleMarkers();
-
     // assign auto-complete to button
     var goToPlace = new google.maps.places.Autocomplete(
         document.getElementById('address_text'));
@@ -338,10 +325,13 @@ function makeMarkerIcon(markerColor) {
     ko.applyBindings(vm);
 /** main script end
   event handlers outside functions / MVC */
-document.getElementById('address_btn').
-    addEventListener('click', function() {
-    goToLocationGoogleMaps();
-});
+
+
+// commented - replaced by Knock out click
+// document.getElementById('address_btn').
+//     addEventListener('click', function() {
+//     goToLocationGoogleMaps();
+// });
 
 /** event handlers to implement DOM manipulation for responsive design layout */
 function openMenu() {

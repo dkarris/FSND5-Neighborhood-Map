@@ -17,8 +17,8 @@
             </div>
             <div id="elements_wrapper">
                 <a href="javascript: void(0)" id="close_POI_list" onclick="closeMenu()">&times</a> <BR>
-                <input id="address_text" type="text" placeholder="Address to go">
-                <input id="address_btn" type="button" value="Go!">
+                <input id="address_text" type="text" placeholder="Address to go" data-bind = "textInput: address">
+                <input id="address_btn" type="button" value="Go!" data-bind="click: goToLocationGoogleMaps">
                 <BR>
                 <input class="_POI_element" id="marker_view" type="checkbox" data-bind="checked: showMarkers">Show Markers</input><BR>
                 <span>Number of markers</span>
@@ -35,6 +35,8 @@
             <div id="map"></div>
         </div>
     <script src="js/lib/knockout-3.4.2.js"></script>
+    <!-- google maps style -->
+    <script src="js/mapStyle.js"></script>
     <script src="js/my_app.js"></script>
     <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_hZGuoD8IFSdiS525BwWIT-SLVbG2FfQ&v=3&callback=loadCurrentLocation&libraries=places" onerror="googleLoadError()"></script>
 </body>
