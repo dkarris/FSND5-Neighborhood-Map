@@ -29,7 +29,7 @@ li {
 }
 
 
-#poi_list {
+#poi-list {
     background-color: black; 
     opacity: 0.7;
     width:30%;
@@ -38,7 +38,7 @@ li {
 }
 
 
-#map_container {
+#map-container {
     height: 100%;
     max-width: 100%;
 }
@@ -50,7 +50,7 @@ li {
 } 
 
 
-.poi_element {
+.poi-element {
     width: 70%;
     margin:auto;
     margin-top: 5px;
@@ -58,32 +58,32 @@ li {
 }
 
 
-#elements_wrapper {
-    width: 80%
+#elements-wrapper {
+    width: 80%;
     opacity: 0.9;
     margin:10px;
     color: white;
 }
 
 
-#address_text {
+#address-text {
        width: 60%;
 }
 
 
-.list_item:hover {
+.list-item:hover {
     background-color: white;
     color: black;
 }
 
 
-#list_wrapper {
+#list-wrapper {
     max-height: 60vh;
     overflow-y: auto;
 }
 
 
-#display_offCanvas, #close_poi_list {
+#display-offCanvas, #close-poi-list {
     display: none;
     margin:5px;
 }
@@ -91,35 +91,34 @@ li {
 
 /* Extra Small Devices, Phones */ 
 @media only screen and (max-width: 450px) {
-#display_offCanvas,
-#close_poi_list {
+#display-offCanvas,
+#close-poi-list {
     display: block;
 }
 
 
-#elements_wrapper {
+#elements-wrapper {
     display: none;
 }
 
 
-#poi_list {
-    left:10px;top: 50px;
+#poi-list {
+    left:10px;
+    top: 50px;
 }
-
-
-/* Small Devices, Tablets */
+}
+/* Small Devices, Tablets  */
 @media only screen and (min-width : 451px) {
-    /* works as intended on ipad        
+    /* works as intended on ipad */
 }
 
 
 /* Medium Devices, Desktops */
 @media only screen and (min-width : 992px) {
-    /* works as intender on desktops.
+    /*works as intended on desktops.*/
 }
-
 
 /* Large Devices, Wide Screens */
 @media only screen and (min-width : 1200px) {
-      
+    /*works as intended on desktops.*/
 }
