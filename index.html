@@ -11,21 +11,21 @@
     <div class="container">
         <div id="poi-list">
             <div id = "display-offCanvas">
-                 <button onclick="openMenu()" id="btn-menu">Display menu</button>
+                 <button data-bind="click: openMenu" id="btn-menu">Display menu</button>
             </div>
             <div id="elements-wrapper">
-                <a href="javascript: void(0)" id="close-poi-list" onclick="closeMenu()">&amp;times</a> <BR>
-                <input id="address-text" type="text" placeholder="Address to go" data-bind = "textInput: address">
+                <a href="javascript: void(0)" id="close-poi-list" data-bind="click: closeMenu">&#x274C;</a> <BR>
+                <input id="address-text" type="text" placeholder="Address to go" data-bind = "textInput: address, valueUpdate: 'keyup'">
                 <input id="address-btn" type="button" value="Go!" data-bind="click: goToLocationGoogleMaps">
                 <BR>
                 <input class="_poi-element" id="marker-view" type="checkbox" data-bind="checked: showMarkers">Show Markers<BR>
-                <span>Number of markers</span>
+                <span>Number of POI's from FourSquare</span>
                 <select data-bind="options: limitPOIoptions, value: limitPOI "></select>
                 <select class="poi-element" data-bind="options: POIcategories, optionsCaption: 'Choose category/Show all', value: filterCategory"></select> 
                 <input class="poi-element" type="search" placeholder = "Search" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
                 <div id="list-wrapper">
                 <ul data-bind="foreach: markersFiltered">
-                         <li class="list-item" data-bind="text: name, click: $parent.display"></li>
+                         <li class="list-item" data-bind="text: name, click: $parent.displayLI"></li>
                 </ul>
                 </div>
                </div>

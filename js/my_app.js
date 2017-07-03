@@ -39,6 +39,7 @@ var ViewModel = function() {
     var self = this;
     this.markers =  ko.observableArray([]);
     this.markersFiltered = ko.observableArray([]);
+    this.query = ko.observable('');
     this.showMarkers = ko.observable(true);
     this.showMarkers.subscribe(toggleMarkers);
     this.limitPOIoptions = ['1','5','10','15','25','50','100'];
@@ -49,7 +50,6 @@ var ViewModel = function() {
     this.POIcategories = ko.observableArray([]); // will get populated with FourSquare POI categories
     this.filterCategory = ko.observable();
     this.filterCategory.subscribe(applyCategoryFilter);
-    this.query = ko.observable('');
     this.query.subscribe(function (searchValue){
         // if searchValue is empty restore the original list else
         // apply filter to markersFilter
@@ -61,12 +61,15 @@ var ViewModel = function() {
                 if (marker.name.toLowerCase().indexOf(searchValue.toLowerCase()) >=0) {
                     self.markersFiltered.push(marker);
                 }
-            }
+            };
         }
         drawGoogleMap(coords,self.markersFiltered());
     });
-    this.display = function (data, event) {
+    this.displayLI = function (data, event) {
         var index = ko.contextFor(event.target).$index();
+        // self.POIcategories.removeAll();
+        // self.POIcategories.push(googleMarkers[index].category);
+        // self.filterCategory = googleMarkers[index].category;
         google.maps.event.trigger(googleMarkers[index],'click');
     };
     this.address = ko.observable();
@@ -123,7 +126,7 @@ function populateInfoWindow(googleMarker, infowindow) {
                             '<BR><div id="windowContent_name"> Name: ' + googleMarker.title + '</div>' +
                             '<BR><div id="windowContent_phone">Phone: ' + googleMarker.phone + '</div>' +
                             '<BR><div id="windowContent_address">Address: '+ googleMarker.address + '</div>' +
-                            '<BR>Info provided by fourSquare';
+                            '<BR>Info provided by FourSquare';
         infowindow.setContent(windowContent);
         infowindow.open(map,googleMarker);
         // if closed - clear the content
@@ -147,6 +150,7 @@ function goToLocationGoogleMaps() {
         window.alert('Address line is blank. Please enter something to search');
     } else {
         // geocode the address
+        console.log(vm.address());
         geocoder.geocode({'address':vm.address()},
                 function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
@@ -281,7 +285,7 @@ function drawGoogleMap(coords,markers) {
         if (vm.POIcategories.indexOf(marker.category) == -1) {
             vm.POIcategories.push(marker.category);
         }
-        
+
         // googleMarker.addListener = auxHighlightIcon
         googleMarker.addListener('mouseover', auxMouseOver);
         googleMarker.addListener('mouseout', auxMouseOut);
@@ -289,8 +293,13 @@ function drawGoogleMap(coords,markers) {
     toggleMarkers();
     // assign auto-complete to button
     var goToPlace = new google.maps.places.Autocomplete(
-        document.getElementById('address_text'));
+        document.getElementById('address-text'));
     goToPlace.bindTo('bounds', map);
+    // Borrowed from SO: forward google place changed event to input event
+    // Otherwise KO textInput doesn't capture content of the field
+    google.maps.event.addListener(goToPlace,'place_changed', function() {
+        ko.utils.triggerEvent(document.getElementById('address-text'),'input');
+    });
  }
 
 /**
@@ -343,14 +352,14 @@ function makeMarkerIcon(markerColor) {
 
 /** event handlers to implement DOM manipulation for responsive design layout */
 function openMenu() {
-    document.getElementById("poi_list").style.width = "90%";
-    document.getElementById("elements_wrapper").style.display = "block";
-    document.getElementById("btn_menu").style.display = "none";
+    document.getElementById("poi-list").style.width = "90%";
+    document.getElementById("elements-wrapper").style.display = "block";
+    document.getElementById("btn-menu").style.display = "none";
 }
 function closeMenu() {
-    document.getElementById("poi_list").style.width = "30%";
-    document.getElementById("elements_wrapper").style.display = "none";
-    document.getElementById("btn_menu").style.display = "block";
+    document.getElementById("poi-list").style.width = "30%";
+    document.getElementById("elements-wrapper").style.display = "none";
+    document.getElementById("btn-menu").style.display = "block";
 }
 
 /* Script end */
