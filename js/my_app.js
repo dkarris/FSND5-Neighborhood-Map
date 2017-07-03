@@ -76,14 +76,12 @@ var ViewModel = function() {
 description aux function to avoid JSlinter error W083 Don't make functions within a loop
 **/
 function auxClickMarkerFunction(googleMarker) {
-  //var infoWindow = new google.maps.InfoWindow();
   if (this.getAnimation() !== null) {
         this.setAnimation(null);
         }
     else {
-      // reset for all other google markers
-      // console.log(googleMarkers);
-      for (let marker of googleMarkers) {
+      // reset animation for all other google markers
+        for (let marker of googleMarkers) {
         marker.setAnimation(null);
       }
       this.setAnimation(google.maps.Animation.BOUNCE);
@@ -345,12 +343,12 @@ function makeMarkerIcon(markerColor) {
 
 /** event handlers to implement DOM manipulation for responsive design layout */
 function openMenu() {
-    document.getElementById("POI_list").style.width = "90%";
+    document.getElementById("poi_list").style.width = "90%";
     document.getElementById("elements_wrapper").style.display = "block";
     document.getElementById("btn_menu").style.display = "none";
 }
 function closeMenu() {
-    document.getElementById("POI_list").style.width = "30%";
+    document.getElementById("poi_list").style.width = "30%";
     document.getElementById("elements_wrapper").style.display = "none";
     document.getElementById("btn_menu").style.display = "block";
 }

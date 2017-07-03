@@ -1,11 +1,27 @@
-html, body {
+html,
+body {
             height: 100%;
             margin: 0;
             padding: 0;
 }
-#map, .container {
+
+ul {
+    list-style: none;
+    padding: 3px;
+}
+
+
+li {
+    margin-bottom: 10px;
+}
+
+
+#map,
+.container {
         height: 100%;
 }
+
+
 .container {
     display: -webkit-flex;
     display: flex;
@@ -13,7 +29,7 @@ html, body {
 }
 
 
-#POI_list {
+#poi_list {
     background-color: black; 
     opacity: 0.7;
     width:30%;
@@ -21,22 +37,26 @@ html, body {
     z-index: 25; position: absolute;top: 40px; right: 30px;
 }
 
+
 #map_container {
     height: 100%;
     max-width: 100%;
 }
+
 
 #map {
     z-index: 1; position: relative;
     width: 100%;
 } 
 
-.POI_element {
+
+.poi_element {
     width: 70%;
     margin:auto;
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
 
 #elements_wrapper {
     width: 80%
@@ -44,43 +64,61 @@ html, body {
     margin:10px;
     color: white;
 }
+
+
 #address_text {
        width: 60%;
-    }
+}
+
+
 .list_item:hover {
     background-color: white;
     color: black;
 }
+
+
 #list_wrapper {
     max-height: 60vh;
     overflow-y: auto;
 }
-#display_offCanvas, #close_POI_list {
+
+
+#display_offCanvas, #close_poi_list {
     display: none;
     margin:5px;
 }
+
+
 /* Extra Small Devices, Phones */ 
 @media only screen and (max-width: 450px) {
-#display_offCanvas, #close_POI_list {
+#display_offCanvas,
+#close_poi_list {
     display: block;
 }
+
 
 #elements_wrapper {
     display: none;
 }
 
-#POI_list {
+
+#poi_list {
     left:10px;top: 50px;
 }
+
 
 /* Small Devices, Tablets */
 @media only screen and (min-width : 451px) {
     /* works as intended on ipad        
 }
+
+
 /* Medium Devices, Desktops */
 @media only screen and (min-width : 992px) {
     /* works as intender on desktops.
 }
+
+
 /* Large Devices, Wide Screens */
 @media only screen and (min-width : 1200px) {
       
