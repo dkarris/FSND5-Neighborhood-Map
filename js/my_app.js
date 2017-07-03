@@ -118,7 +118,8 @@ function populateInfoWindow(googleMarker, infowindow) {
         var windowContent = '<div id="windowContent_category"> Category: ' + googleMarker.category + '</div>' +
                             '<BR><div id="windowContent_name"> Name: ' + googleMarker.title + '</div>' +
                             '<BR><div id="windowContent_phone">Phone: ' + googleMarker.phone + '</div>' +
-                            '<BR><div id="windowContent_address">Address: '+ googleMarker.address + '</div>';
+                            '<BR><div id="windowContent_address">Address: '+ googleMarker.address + '</div>' +
+                            '<BR>Info provided by fourSquare';
         infowindow.setContent(windowContent);
         infowindow.open(map,googleMarker);
         // if closed - clear the content
@@ -168,7 +169,7 @@ function loadFourSquareObjects(coordinates,records) {
                         fourSquare_CLIENT_SECRET + "&v=20170101&ll="+coordinates + "&limit="+records;
     // clear markers location array before reseting the map
     vm.markers().length = 0;
-    $.getJSON(fourSquare_urlAPI, function successGetFromFourSquare(response){
+    $.getJSON(fourSquare_urlAPI).done(function successGetFromFourSquare(response){
         $.each(response.response.venues, function loadMarkers(key,value){
             vm.markers.push(new Marker(value));
         });
@@ -176,7 +177,9 @@ function loadFourSquareObjects(coordinates,records) {
         // and vm.markers is used to restore it back
         vm.markersFiltered(vm.markers.slice());
         drawGoogleMap(coordinates, vm.markers());
-    });
+    }).fail(function (status,error) {
+        alert('Error while retrieving FourSquare API. Error' + error);
+    })
 }
 
 /**
