@@ -7,6 +7,7 @@ var fourSquare_CLIENT_SECRET = "PWO4MWWSEP0CSCK250VWZFKKNTQIJHQEYTQH2KQ1GHCT2AOK
 /** defining Google Maps API variables */
 var map;
 var googleMarkers=[];
+var infoWindow;
 // model object for coordinates
 var coords;
 
@@ -75,11 +76,16 @@ var ViewModel = function() {
 description aux function to avoid JSlinter error W083 Don't make functions within a loop
 **/
 function auxClickMarkerFunction(googleMarker) {
-  var infoWindow = new google.maps.InfoWindow();
+  //var infoWindow = new google.maps.InfoWindow();
   if (this.getAnimation() !== null) {
         this.setAnimation(null);
         }
     else {
+      // reset for all other google markers
+      // console.log(googleMarkers);
+      for (let marker of googleMarkers) {
+        marker.setAnimation(null);
+      }
       this.setAnimation(google.maps.Animation.BOUNCE);
     }
     populateInfoWindow(this, infoWindow);
@@ -207,6 +213,7 @@ function applyCategoryFilter(filterValue) {
 */
 function loadCurrentLocation() {
     map = new google.maps.Map(document.getElementById('map'), { });
+    infoWindow = new google.maps.InfoWindow();
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(coordinates) {
           coords = coordinates.coords.latitude+"," + coordinates.coords.longitude;
